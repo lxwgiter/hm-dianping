@@ -96,13 +96,23 @@ public class UserController {
         return Result.ok(userDTO);
     }
 
-//    @PostMapping("/sign")
-//    public Result sign(){
-//        return userService.sign();
-//    }
-//
-//    @GetMapping("/sign/count")
-//    public Result signCount(){
-//        return userService.signCount();
-//    }
+    /**
+     * 用户签到功能的实现，页面没有做出相应的签到按钮，
+     * 我们是通过：http://localhost:8080/api/user/sign模拟的请求
+     * @return
+     */
+    @PostMapping("/sign")
+    public Result sign(){
+        return userService.sign();
+    }
+
+    /**
+     * 用户连续签到天数统计，页面没有做出相应的签到按钮，
+     * 我们是通过：http://localhost:8080/api/user/sign/count模拟的请求
+     * @return
+     */
+    @GetMapping("/sign/count")
+    public Result signCount(){
+        return userService.signCount();
+    }
 }

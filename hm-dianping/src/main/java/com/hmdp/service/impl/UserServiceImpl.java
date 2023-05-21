@@ -111,6 +111,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return Result.ok(token);
     }
 
+    /**
+     * 利用位图（BitMap）实现签到功能
+     * @return
+     */
     @Override
     public Result sign() {
         // 1.获取当前登录用户
@@ -120,13 +124,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 3.拼接key
         String keySuffix = now.format(DateTimeFormatter.ofPattern(":yyyyMM"));
         String key = USER_SIGN_KEY + userId + keySuffix;
-        // 4.获取今天是本月的第几天
+        // 4.获取今天是本月的第几天，如果当前是21号，那么就返回21
         int dayOfMonth = now.getDayOfMonth();
-        // 5.写入Redis SETBIT key offset 1
+        // 5.写入Redis SETBIT key offset 1，偏移量从0开始
         stringRedisTemplate.opsForValue().setBit(key, dayOfMonth - 1, true);
         return Result.ok();
     }
 
+    /**
+     * 通过按位与运算统计连续签到天数，原理如下：假设有一串二进制数1001011011代表本月签到位图
+     * 我们从redis中取到的十进制数本质就是1001011011，第一次循环与1做与运算，1001011011 & 1 = 1
+     * 将1001011011无符号右移一位得100101101，再次与1做与运算，循环往复可得连续签到天数
+     * @return
+     */
     @Override
     public Result signCount() {
         // 1.获取当前登录用户
